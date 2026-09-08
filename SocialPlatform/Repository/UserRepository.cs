@@ -17,11 +17,11 @@ namespace SocialPlatform
             _users.Add(user);
         }
 
-        public User? GetById(Guid userId)
+        public User? GetById(Guid UserId)
         {
             foreach (var user in _users)
             {
-                if(user.UserId == userId)
+                if(user.UserId == UserId)
                 {
                     return user;
                 }
@@ -34,9 +34,9 @@ namespace SocialPlatform
             return _users;
         }
 
-        public void Delete(Guid userId)
+        public void Delete(Guid UserId)
         {
-            var user = GetById(userId);
+            var user = GetById(UserId);
             if(user != null)
             {
                 _users.Remove(user);
