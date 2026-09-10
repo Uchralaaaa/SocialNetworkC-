@@ -25,10 +25,8 @@ namespace SocialPlatform.Services
 
         public ImagePost CreateImagePost(Guid authorId, string contentText, string imageURL) 
         {
-            var newPost = new ImagePost(authorId, contentText)
-            {
-                ImageURL = imageURL
-            };
+            var newPost = new ImagePost(authorId, contentText, imageURL);
+            
             _postRepository.Add(newPost);
             return newPost;
         }
