@@ -35,5 +35,38 @@ namespace SocialPlatform.Services
         {
             return _postRepository.GetById(postId);
         }
+
+        //interaction buyu like, comment, repost
+        public bool LikePost(Guid postId, Guid userId)
+        {
+            var post = _postRepository.GetById(postId);
+            if (post == null) return false;
+
+            post.AddLike(userId);
+            return true;
+        }
+
+        public bool CommentOnPost(Guid postId, Guid userId, string commentText)
+        {
+            var post = _postRepository.GetById(postId);
+            if (post == null) return false;
+
+            post.AddComment(userId, commentText);
+            return true;
+        }
+
+        public bool SharePost(Guid postId, Guid userId)
+        {
+            var post = _postRepository.GetById(postId);
+            if (post == null) return false;
+
+            post.AddShare(userId);
+            return true;
+        }
+
+        public IEnumerable<Post> GetAllPosts()
+        {
+            return _postRepository.GetAll();
+        }
     }
 }
