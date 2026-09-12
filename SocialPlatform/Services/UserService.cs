@@ -9,9 +9,9 @@ namespace SocialPlatform.Services
     {
         private readonly UserRepository _userRepository;
 
-        public UserService(UserRepository userrepository)
+        public UserService(UserRepository userRepository)
         {
-            _userRepository = userrepository;
+            _userRepository = userRepository;
         }
 
         public User RegisterUser(string username, DateTime DOB, string password, string profilePic)
