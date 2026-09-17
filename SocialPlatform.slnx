@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="../../ImageProcessing/ImageProcessing/ImageProcessingLib.csproj" />
+  <Project Path="../../ImageProcessing/ImageProcessorTest/ImageProcessorTest.csproj" />
   <Project Path="SocialPlatform.ConsoleApp/SocialPlatform.ConsoleApp.csproj" Id="7e8432c1-76e9-4b95-b6c5-db22f0eaa83a" />
   <Project Path="SocialPlatform/SocialPlatform.csproj" />
 </Solution>

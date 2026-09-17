@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ImageProcessing;
 using SocialPlatform.Domain;
 using SocialPlatform.Repository;
 using SocialPlatform.Services;
+using System;
+using ImageProcessingLib;
 
 namespace SocialPlatform.ConsoleApp;
 
@@ -194,17 +196,62 @@ internal class Program
         Console.Write("Enter post content/caption: ");
         string? content = Console.ReadLine();
 
-        Console.Write("Enter Image URL: ");
-        string? imageUrl = Console.ReadLine();
+        Console.Write("Enter Local Image File Path (\"C:\\Users\\tugsu\\Downloads\\wallpaperflare.com_wallpaper(1).jpg\"): ");
+        string? inputPath = Console.ReadLine();
 
-        if (string.IsNullOrWhiteSpace(content) || string.IsNullOrWhiteSpace(imageUrl))
+        if (string.IsNullOrWhiteSpace(content) || string.IsNullOrWhiteSpace(inputPath))
         {
-            ShowError("Caption and Image URL cannot be empty.");
+            ShowError("Caption and File Path cannot be empty.");
             return;
         }
 
-        var post = _postService.CreateImagePost(_currentUser!.UserId, content, imageUrl);
-        ShowSuccess($"Image Post created! Post ID: {post.ContentId}");
+        if (!File.Exists(inputPath))
+        {
+            ShowError($"File not found at: {inputPath}");
+            return;
+        }
+
+        try
+        {
+            Console.WriteLine("\nProcessing image (Cropping and Resizing)...");
+
+            // 1. Initialize ImageProcessor and Options
+            var processor = new ImageProcessor();
+            var options = new ImageProcessingOptions
+            {
+                RequiredWidthRatio = 1,
+                RequiredHeightRatio = 1,
+                MinWidth = 512,
+                MaxWidth = 512
+            };
+
+            // 2. Open input file stream
+            using FileStream inputStream = File.OpenRead(inputPath);
+
+            // 3. Process image stream using your library
+            using MemoryStream processedStream = processor.ProcessImage(inputStream, options);
+
+            // 4. Save processed image stream to disk
+            string outputDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProcessedImages");
+            Directory.CreateDirectory(outputDirectory);
+
+            string outputFileName = $"post_{Guid.NewGuid()}.png";
+            string outputPath = Path.Combine(outputDirectory, outputFileName);
+
+            using (FileStream outputFileWriter = File.Create(outputPath))
+            {
+                processedStream.CopyTo(outputFileWriter);
+            }
+
+            // 5. Create post using the processed image path
+            var post = _postService.CreateImagePost(_currentUser!.UserId, content, outputPath);
+
+            ShowSuccess($"Image Post created successfully!\nProcessed File Saved To: {outputPath}\nPost ID: {post.ContentId}");
+        }
+        catch (Exception ex)
+        {
+            ShowError($"Image processing failed: {ex.Message}");
+        }
     }
 
     private static void ViewFeed()
