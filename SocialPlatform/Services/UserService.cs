@@ -14,9 +14,9 @@ namespace SocialPlatform.Services
             _userRepository = userRepository;
         }
 
-        public User RegisterUser(string username, DateTime DOB, string password, string profilePic)
+        public User RegisterUser(string username, DateTime DOB, string password, string? profilePic = null)
         {
-            //user entity uusgeh entity gej yuve 
+            //user entity uusgeh  
             var newUser = new User(username, DOB, password, profilePic);
             
             //shine user nemeh
@@ -27,6 +27,14 @@ namespace SocialPlatform.Services
 
         public User? GetUser(Guid userId) { 
             return _userRepository.GetById(userId);
+        }
+
+        public User? Login(string username, string password)
+        {
+            var user = _userRepository.GetAll()
+                .FirstOrDefault(u=>u.UserName == username && u.PassWord == password);
+
+            return user;
         }
     }
 }

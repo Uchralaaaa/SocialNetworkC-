@@ -1,38 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
-using System.Text;
+using System.Linq;
 using SocialPlatform.Domain;
 
 namespace SocialPlatform.Repository
 {
     public class PostRepository
     {
-        private readonly List<Post> _posts = new List<Post>();
+        private readonly SocialDbContext _context;
+
+        public PostRepository(SocialDbContext context)
+        {
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+        }
 
         public void Add(Post post)
         {
-            _posts.Add(post);
+            if (post == null) throw new ArgumentNullException(nameof(post));
+            _context.Posts.Add(post);
+            _context.SaveChanges();
         }
 
-        public Post? GetById(Guid Id)
+        public Post? GetById(Guid postId)
         {
-            foreach(var post in _posts)
-            {
-                if(post.ContentId == Id)
-                {
-                    return post;
-                }
-            }
-            return null;
+            return _context.Posts.FirstOrDefault(p => p.Id == postId);
         }
 
-        public IEnumerable<Post> GetAll() => _posts;
-
-        public void Delete(Guid ContentId)
+        public IEnumerable<Post> GetAll()
         {
-            var post = GetById(ContentId);
-            if (post != null) { _posts.Remove(post); }
+            return _context.Posts.ToList();
+        }
+
+        public void Update(Post post)
+        {
+            if (post == null) throw new ArgumentNullException(nameof(post));
+            _context.Posts.Update(post);
+            _context.SaveChanges();
         }
     }
 }
